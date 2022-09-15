@@ -34,7 +34,7 @@ const writeFile = (answers) => {
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">ID: ${engineer.getId()}</li>
                                 <li class="list-group-item">Email: <a href="mailto:${engineer.getEmail()}" class="card-link">${engineer.getEmail()}</a></li>
-                                <li class="list-group-item">GitHub: <a href="github.com/${engineer.getUserName()}" target="_blank">${engineer.getUserName()}</a></li>
+                                <li class="list-group-item">GitHub: <a href="https://github.com/${engineer.getUserName()}" target="_blank">${engineer.getUserName()}</a></li>
                             </ul>
                         </div>
                     </div>`
