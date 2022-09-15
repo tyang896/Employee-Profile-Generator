@@ -1,6 +1,10 @@
 const Employee = require("../lib/Employee");
 
 describe("Employee class", () => {
+    it("should create a new employee instance", () => {
+        const employee = new Employee();
+        expect(typeof(employee)).toBe("object");
+    })
     describe("getName", () => {
         it("Returns the employee's name", () => {
             const employee = new Employee("John");

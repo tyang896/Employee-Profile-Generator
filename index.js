@@ -8,79 +8,43 @@ const Intern = require("./lib/Intern");
 inquirer.registerPrompt("loop", require("inquirer-loop")(inquirer));
 
 const writeFile = (answers) => {
-            //console.log(answers);
-            const manager = new Manager(answers.manager, answers.managerId, answers.managerEmail, answers.managerPhone);
-            const engineers = [];
-            const interns = [];
-            //Have all the answers written into a new index.html file inside the dist folder
-            answers.teamMember.forEach(employee => {
-                if (employee.teamMemberType === "Engineer") {
-                    const engineer = new Engineer(employee.engineerName, employee.engineerId, employee.engineerEmail, employee.engineerGitHub);
-                    engineers.push(engineer);
-                    console.log(engineers);
-                } else if (employee.teamMemberType === "Intern") {
-                    //Add code to add a new Intern here
-                    const intern = new Intern(employee.internName, employee.internId, employee.internEmail, employee.internSchool);
-                    interns.push(intern);
-                    console.log(interns);
-                }
-            })
-    
-            fs.writeFile("./dist/index.html", `<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Team</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
-        crossorigin="anonymous"></script>
-</head>
-
-<body>
-    <header class="bg-danger text-light text-center p-4 m-4">My Team</header>
-    <main>
-        <div class="container d-flex justify-content-center">
-            <div class="row">
-            <div class="card m-3" style="width: 18rem;">
-                    <div class="card-body">
-                        <div class="card-header bg-primary text-light">
-                            <h5 class="card-title">${manager.getName()}</h5>
-                            <h6 class="card-subtitle mb-2">${manager.getRole()}</h6>
+    const manager = new Manager(answers.manager, answers.managerId, answers.managerEmail, answers.managerPhone);
+    const engineers = [];
+    const interns = [];
+    let engineerCards = "";
+    let internCards = "";
+    answers.teamMember.forEach(employee => {
+        if (employee.teamMemberType === "Engineer") {
+            const engineer = new Engineer(employee.engineerName, employee.engineerId, employee.engineerEmail, employee.engineerGitHub);
+            engineers.push(engineer);
+        } else if (employee.teamMemberType === "Intern") {
+            const intern = new Intern(employee.internName, employee.internId, employee.internEmail, employee.internSchool);
+            interns.push(intern);
+        }
+    })
+    if (engineers.length !== 0) {
+        engineers.forEach(engineer => {
+            let card = `
+                    <div class="card m-3" style="width: 18rem;">
+                        <div class="card-body">
+                            <div class="card-header bg-primary text-light">
+                                <h5 class="card-title">${engineer.getName()}</h5>
+                                <h6 class="card-subtitle mb-2">${engineer.getRole()}</h6>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">ID: ${engineer.getId()}</li>
+                                <li class="list-group-item">Email: <a href="mailto:${engineer.getEmail()}" class="card-link">${engineer.getEmail()}</a></li>
+                                <li class="list-group-item">GitHub: <a href="github.com/${engineer.getUserName()}" target="_blank">${engineer.getUserName()}</a></li>
+                            </ul>
                         </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">ID: ${manager.getId()}</li>
-                            <li class="list-group-item">Email: <a href="#" class="card-link">${manager.getEmail()}</a></li>
-                            <li class="list-group-item">Office number: ${manager.getOfficeNum()}</li>
-                        </ul>
-                    </div>
-                </div>`,
-                (err) => err ? console.error(err) : console.log("index.html generated successfully"));
-            if (engineers.length !== 0) {
-                engineers.forEach(engineer => {
-                    fs.appendFile("./dist/index.html", `<div class="card m-3" style="width: 18rem;">
-                    <div class="card-body">
-                        <div class="card-header bg-primary text-light">
-                            <h5 class="card-title">${engineer.getName()}</h5>
-                            <h6 class="card-subtitle mb-2">${engineer.getRole()}</h6>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">ID: ${engineer.getId()}</li>
-                            <li class="list-group-item">Email: <a href="#" class="card-link">${engineer.getEmail()}</a></li>
-                            <li class="list-group-item">GitHub: ${engineer.getUserName()}</li>
-                        </ul>
-                    </div>
-                    </div>`,
-                        (err) => err ? console.error(err) : console.log("engineer added succesfully"));
-                })
-            }
-            if (interns.length !== 0) {
-                interns.forEach(intern => {
-                    fs.appendFile("./dist/index.html", `<div class="card m-3" style="width: 18rem;">
+                    </div>`
+            engineerCards += card;
+        })
+    }
+    if (interns.length !== 0) {
+        interns.forEach(intern => {
+            let card = `
+                    <div class="card m-3" style="width: 18rem;">
                         <div class="card-body">
                             <div class="card-header bg-primary text-light">
                                 <h5 class="card-title">${intern.getName()}</h5>
@@ -88,14 +52,55 @@ const writeFile = (answers) => {
                             </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">ID: ${intern.getId()}</li>
-                                <li class="list-group-item">Email: <a href="#" class="card-link">${intern.getEmail()}</a></li>
+                                <li class="list-group-item">Email: <a href="mailto:${intern.getEmail()}" class="card-link">${intern.getEmail()}</a></li>
                                 <li class="list-group-item">School: ${intern.getSchool()}</li>
                             </ul>
                         </div>
-                    </div>`,
-                        (err) => err ? console.error(err) : console.log("intern added succesfully"));
-                })
-            }
+                    </div>`
+            internCards += card;
+        })
+    }
+    fs.writeFile("./dist/index.html", `<!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Team</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+            crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <header class="bg-danger text-light text-center p-4 m-4">My Team</header>
+        <main>
+            <div class="container d-flex justify-content-center">
+                <div class="row">
+                <div class="card m-3" style="width: 18rem;">
+                        <div class="card-body">
+                            <div class="card-header bg-primary text-light">
+                                <h5 class="card-title">${manager.getName()}</h5>
+                                <h6 class="card-subtitle mb-2">${manager.getRole()}</h6>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">ID: ${manager.getId()}</li>
+                                <li class="list-group-item">Email: <a href="mailto:${manager.getEmail()}" class="card-link">${manager.getEmail()}</a></li>
+                                <li class="list-group-item">Office number: ${manager.getOfficeNum()}</li>
+                            </ul>
+                        </div>
+                    </div>
+                ${engineerCards}
+                ${internCards}
+        </div>
+    </div>
+</main>
+</body>
+</html>
+                                    `, (err) => err ? console.error(err) : console.log("index.html generated successfully"));
 }
 
 const init = () => {
@@ -202,14 +207,6 @@ const init = () => {
         }
     ]).then((data) => {
         writeFile(data);
-    }).then(() => {
-        fs.appendFile("./dist/index.html", `
-        </div>
-    </div>
-</main>
-</body>
-</html>
-        `, (err) => err ? console.error(err) : console.log("closing html tags added succesfully"))
     })
 }
 
