@@ -7,12 +7,14 @@ const Intern = require("./lib/Intern");
 //inquirer-loop source: https://www.npmjs.com/package/inquirer-loop
 inquirer.registerPrompt("loop", require("inquirer-loop")(inquirer));
 
+//Takes the answers from the user's responses to the prompts and generates an index.html page
 const writeFile = (answers) => {
     const manager = new Manager(answers.manager, answers.managerId, answers.managerEmail, answers.managerPhone);
     const engineers = [];
     const interns = [];
     let engineerCards = "";
     let internCards = "";
+    //For each new employee added, they are added to the engineers or interns list
     answers.teamMember.forEach(employee => {
         if (employee.teamMemberType === "Engineer") {
             const engineer = new Engineer(employee.engineerName, employee.engineerId, employee.engineerEmail, employee.engineerGitHub);
@@ -22,6 +24,7 @@ const writeFile = (answers) => {
             interns.push(intern);
         }
     })
+    //Create a card for each new engineer added
     if (engineers.length !== 0) {
         engineers.forEach(engineer => {
             let card = `
@@ -41,6 +44,7 @@ const writeFile = (answers) => {
             engineerCards += card;
         })
     }
+    //Create a card for each new intern added
     if (interns.length !== 0) {
         interns.forEach(intern => {
             let card = `
@@ -60,6 +64,7 @@ const writeFile = (answers) => {
             internCards += card;
         })
     }
+    //Creates an index.html file inside the dist folder
     fs.writeFile("./dist/index.html", `<!DOCTYPE html>
     <html lang="en">
 
@@ -103,6 +108,7 @@ const writeFile = (answers) => {
                                     `, (err) => err ? console.error(err) : console.log("index.html generated successfully"));
 }
 
+//This function runs when the user runs "node index.js" in the terminal. 
 const init = () => {
     inquirer.prompt([
         {
